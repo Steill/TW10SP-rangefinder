@@ -29,73 +29,73 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.comSelector = new System.Windows.Forms.ComboBox();
+            this.measureBtn = new System.Windows.Forms.Button();
+            this.outputList = new System.Windows.Forms.ListBox();
+            this.clearBtn = new System.Windows.Forms.Button();
+            this.btnLockTimer = new System.Windows.Forms.Timer(this.components);
+            this.selectorLockTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
-            // comboBox1
+            // comSelector
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(12, 12);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(95, 21);
-            this.comboBox1.TabIndex = 0;
-            this.comboBox1.Text = "Select COM";
-            this.comboBox1.DropDown += new System.EventHandler(this.comboBox1_DropDown);
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comSelector.FormattingEnabled = true;
+            this.comSelector.Location = new System.Drawing.Point(12, 12);
+            this.comSelector.Name = "comSelector";
+            this.comSelector.Size = new System.Drawing.Size(95, 21);
+            this.comSelector.TabIndex = 0;
+            this.comSelector.Text = "Select COM";
+            this.comSelector.DropDown += new System.EventHandler(this.RefreshCOMs);
+            this.comSelector.SelectedIndexChanged += new System.EventHandler(this.ConnectToCOM);
             // 
-            // button1
+            // measureBtn
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(12, 44);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(95, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "MEASURE";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.measureBtn.Enabled = false;
+            this.measureBtn.Location = new System.Drawing.Point(12, 44);
+            this.measureBtn.Name = "measureBtn";
+            this.measureBtn.Size = new System.Drawing.Size(95, 23);
+            this.measureBtn.TabIndex = 1;
+            this.measureBtn.Text = "MEASURE";
+            this.measureBtn.UseVisualStyleBackColor = true;
+            this.measureBtn.Click += new System.EventHandler(this.SendCommand);
             // 
-            // listBox1
+            // outputList
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(113, 12);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(360, 121);
-            this.listBox1.TabIndex = 2;
+            this.outputList.FormattingEnabled = true;
+            this.outputList.Location = new System.Drawing.Point(113, 12);
+            this.outputList.Name = "outputList";
+            this.outputList.Size = new System.Drawing.Size(360, 121);
+            this.outputList.TabIndex = 2;
             // 
-            // button2
+            // clearBtn
             // 
-            this.button2.Location = new System.Drawing.Point(12, 110);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(94, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "CLEAR";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.clearBtn.Location = new System.Drawing.Point(12, 110);
+            this.clearBtn.Name = "clearBtn";
+            this.clearBtn.Size = new System.Drawing.Size(94, 23);
+            this.clearBtn.TabIndex = 3;
+            this.clearBtn.Text = "CLEAR";
+            this.clearBtn.UseVisualStyleBackColor = true;
+            this.clearBtn.Click += new System.EventHandler(this.ClearOutput);
             // 
-            // timer1
+            // btnLockTimer
             // 
-            this.timer1.Interval = 2500;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.btnLockTimer.Interval = 2500;
+            this.btnLockTimer.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // timer2
+            // selectorLockTimer
             // 
-            this.timer2.Interval = 1000;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.selectorLockTimer.Interval = 1000;
+            this.selectorLockTimer.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(485, 146);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.clearBtn);
+            this.Controls.Add(this.outputList);
+            this.Controls.Add(this.measureBtn);
+            this.Controls.Add(this.comSelector);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
             this.Text = "RangeFinder";
@@ -105,12 +105,12 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.ComboBox comSelector;
+        private System.Windows.Forms.Button measureBtn;
+        private System.Windows.Forms.ListBox outputList;
+        private System.Windows.Forms.Button clearBtn;
+        private System.Windows.Forms.Timer btnLockTimer;
+        private System.Windows.Forms.Timer selectorLockTimer;
     }
 }
 

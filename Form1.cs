@@ -8,14 +8,14 @@ namespace rangefinder
     public partial class Form1 : Form
     {
         private SerialPort port_ = null;
-        private StringBuilder sb = new StringBuilder(0x20);
+        private StringBuilder comReply = new StringBuilder(0x20);
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void SendCommand(object sender, EventArgs e)
         {
             if (port_ == null)
                 return;
@@ -30,7 +30,7 @@ namespace rangefinder
                     port_.Write(command, 0, 8);
 
                     btn.Enabled = false;
-                    timer1.Start();
+                    btnLockTimer.Start();
                 }
                 catch
                 {
@@ -41,12 +41,12 @@ namespace rangefinder
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ClearOutput(object sender, EventArgs e)
         {
-            listBox1.Items.Clear();
+            outputList.Items.Clear();
         }
 
-        private void comboBox1_DropDown(object sender, EventArgs e)
+        private void RefreshCOMs(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
             comboBox.Items.Clear();
@@ -55,10 +55,10 @@ namespace rangefinder
             foreach (string port in ports)
                 comboBox.Items.Add(port);
 
-            listBox1.Items.Insert(0, " -<- COM Ports Refreshed ->- ");
+            outputList.Items.Insert(0, " -<- COM Ports Refreshed ->- ");
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ConnectToCOM(object sender, EventArgs e)
         {
             if (port_ != null && port_.IsOpen)
             {
@@ -68,14 +68,14 @@ namespace rangefinder
 
             ComboBox comboBox = (ComboBox)sender;
             port_ = new SerialPort(comboBox.SelectedItem.ToString(), 9600, Parity.None, 8, StopBits.One);
-            port_.DataReceived += new SerialDataReceivedEventHandler(port_dataRecieved);
+            port_.DataReceived += new SerialDataReceivedEventHandler(DataRecieved);
 
             try
             {
                 port_.Open();
 
-                comboBox1.Enabled = false;
-                timer2.Start();
+                comSelector.Enabled = false;
+                selectorLockTimer.Start();
             }
             catch
             {
@@ -84,18 +84,21 @@ namespace rangefinder
             }
         }
 
-        private void port_dataRecieved(object sender, SerialDataReceivedEventArgs e)
+        private void DataRecieved(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort serialPort = (SerialPort)sender;
             
-            sb.Append(serialPort.ReadExisting());
+            comReply.Append(serialPort.ReadExisting());
 
-            if (sb.Length < 9)
+            if (comReply.Length < 9)
                 return;
 
-            byte[] data = Encoding.ASCII.GetBytes(sb.ToString());
+            byte[] data = Encoding.ASCII.GetBytes(comReply.ToString());
 
-            if (data[0] == 0x1 && data[1] == 0x3 && data[2] == 0x4)
+            if (data[0] != 0x1) 
+                return;
+
+            if (data[1] == 0x3 && data[2] == 0x4)
             {
                 string hex_view = "";
                 foreach (byte b in data)
@@ -114,12 +117,12 @@ namespace rangefinder
                 DateTime time = DateTime.Now;
                 string result = String.Format("{2:D2}:{3:D2}:{4:D2} - {0}мм [ {1}]", value, hex_view, time.Hour, time.Minute, time.Second);
 
-                listBox1.Invoke((MethodInvoker)delegate
+                outputList.Invoke((MethodInvoker)delegate
                 {
-                    listBox1.Items.Insert(0, result);
+                    outputList.Items.Insert(0, result);
                 });
             }
-            sb.Clear();
+            comReply.Clear();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -127,7 +130,8 @@ namespace rangefinder
             Timer timer = (Timer)sender;
 
             timer.Enabled = false;
-            button1.Enabled = true;
+
+            measureBtn.Enabled = true;
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -136,10 +140,10 @@ namespace rangefinder
 
             timer.Enabled = false;
 
-            comboBox1.Enabled = true;
-            button1.Enabled = true;
+            comSelector.Enabled = true;
+            measureBtn.Enabled = true;
 
-            button1.Focus();
+            measureBtn.Focus();
         }
     }
 }
